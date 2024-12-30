@@ -28,20 +28,6 @@ PACKAGES="$PACKAGES luci-i18n-dockerman-zh-cn"
 PACKAGES="$PACKAGES luci-app-npc"
 PACKAGES="$PACKAGES npc"
 
-# 添加 SSR Plus+ 相关包
-PACKAGES="$PACKAGES luci-app-ssr-plus"
-PACKAGES="$PACKAGES luci-i18n-ssr-plus-zh-cn"
-PACKAGES="$PACKAGES shadowsocks-libev-ss-local"
-PACKAGES="$PACKAGES shadowsocks-libev-ss-redir"
-PACKAGES="$PACKAGES shadowsocks-libev-ss-server"
-PACKAGES="$PACKAGES shadowsocksr-libev-ssr-local"
-PACKAGES="$PACKAGES shadowsocksr-libev-ssr-redir"
-PACKAGES="$PACKAGES shadowsocksr-libev-ssr-server"
-PACKAGES="$PACKAGES xray-core"
-PACKAGES="$PACKAGES chinadns-ng"
-PACKAGES="$PACKAGES ipt2socks"
-PACKAGES="$PACKAGES simple-obfs"
-
 # 构建镜像
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Building image with the following packages:"
 echo "$PACKAGES"
