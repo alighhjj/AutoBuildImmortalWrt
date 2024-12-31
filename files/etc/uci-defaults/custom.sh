@@ -20,12 +20,7 @@ done
 
 # 网络设置
 if [ "$count" -eq 1 ]; then
-  uci set network.lan.proto='static'
-  uci set network.lan.ipaddr='192.168.31.5'
-  uci set network.lan.netmask='255.255.255.0'
-  uci set network.lan.gateway='192.168.31.1'
-  uci set network.lan.dns='192.168.31.1'
-  uci delete dhcp.lan
+  uci set network.lan.proto='dhcp'
 elif [ "$count" -gt 1 ]; then
   uci set network.lan.ipaddr='192.168.31.5'
 fi
