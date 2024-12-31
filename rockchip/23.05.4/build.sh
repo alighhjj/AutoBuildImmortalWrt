@@ -25,9 +25,6 @@ PACKAGES="$PACKAGES luci-app-openclash"
 PACKAGES="$PACKAGES luci-i18n-homeproxy-zh-cn"
 PACKAGES="$PACKAGES openssh-sftp-server"
 PACKAGES="$PACKAGES luci-i18n-dockerman-zh-cn"
-PACKAGES="$PACKAGES npc"
-PACKAGES="$PACKAGES luci-app-npc"
-PACKAGES="$PACKAGES luci-i18n-npc-zh-cn"
 
 
 # 构建镜像
