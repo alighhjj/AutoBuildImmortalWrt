@@ -27,8 +27,6 @@ PACKAGES="$PACKAGES openssh-sftp-server"
 PACKAGES="$PACKAGES luci-i18n-dockerman-zh-cn"
 PACKAGES="$PACKAGES npc"
 PACKAGES="$PACKAGES luci-app-npc"
-PACKAGES="$PACKAGES luci-app-ssr-plus"
-PACKAGES="$PACKAGES luci-i18n-ssr-plus-zh-cn"
 
 # 构建镜像
 echo "$(date '+%Y-%m-%d %H:%M:%S') - Building image with the following packages:"
