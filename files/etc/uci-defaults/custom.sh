@@ -20,9 +20,23 @@ done
 
 # 网络设置
 if [ "$count" -eq 1 ]; then
-  uci set network.lan.proto='dhcp'
-elif [ "$count" -gt 1 ]; then
+  # 配置旁路由模式
+  uci set network.lan.proto='static'
   uci set network.lan.ipaddr='192.168.31.5'
+  uci set network.lan.netmask='255.255.255.0'
+  uci set network.lan.gateway='192.168.31.1'
+  uci set network.lan.dns='192.168.31.1'
+  # 禁用 DHCP 服务器
+  uci set dhcp.lan.ignore='1'
+elif [ "$count" -gt 1 ]; then
+  # 多网口时也配置为旁路由模式
+  uci set network.lan.proto='static'
+  uci set network.lan.ipaddr='192.168.31.5'
+  uci set network.lan.netmask='255.255.255.0'
+  uci set network.lan.gateway='192.168.31.1'
+  uci set network.lan.dns='192.168.31.1'
+  # 禁用 DHCP 服务器
+  uci set dhcp.lan.ignore='1'
 fi
 
 # 设置所有网口可访问网页终端
