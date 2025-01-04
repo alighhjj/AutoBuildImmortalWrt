@@ -46,18 +46,14 @@ jobs:
           for profile in "${profile_array[@]}"; do
             echo "Building for profile: $profile"
             
-            # 使用 Docker 运行构建环境
             docker run --rm -i \
               --user root \
-              # 挂载必要的目录和文件
               -v "${{ github.workspace }}/bin:/home/build/immortalwrt/bin" \
               -v "${{ github.workspace }}/files:/home/build/immortalwrt/files" \
               -v "${{ github.workspace }}/rockchip/imm.config:/home/build/immortalwrt/.config" \
               -v "${{ github.workspace }}/rockchip/23.05.4/build.sh:/home/build/immortalwrt/build.sh" \
-              # 设置环境变量
               -e PROFILE=$profile \
               -e ROOTFS_PARTSIZE=$rootfs_partsize \
-              # 使用官方提供的构建镜像
               immortalwrt/imagebuilder:rockchip-armv8-openwrt-23.05.4 /bin/bash /home/build/immortalwrt/build.sh
           done
 
