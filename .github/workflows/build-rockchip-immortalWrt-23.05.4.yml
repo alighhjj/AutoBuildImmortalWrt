@@ -1,66 +1,89 @@
+# 工作流名称：构建 rockchip 平台的 immortalWrt 23.05.4 版本
 name: build-rockchip-immortalWrt-23.05.4
 
+# 触发条件：手动触发
 on:
   workflow_dispatch:
     inputs:
+      # 输入参数：选择要构建的设备型号
       profile:
         description: |
           输入 软路由型号（用逗号分隔的多个值），可选值如下：
           ariaboard_photonicat,armsom_sige3,ezpro_mrkaio-m68s,firefly_roc-rk3328-cc,firefly_roc-rk3568-pc,friendlyarm_nanopc-t4,friendlyarm_nanopi-r2c,friendlyarm_nanopi-r2c-plus,friendlyarm_nanopi-r2s,friendlyarm_nanopi-r4s,friendlyarm_nanopi-r4s-enterprise,friendlyarm_nanopi-r4se,friendlyarm_nanopi-r5c,friendlyarm_nanopi-r5s,huake_guangmiao-g4c,lunzn_fastrhino-r66s,lunzn_fastrhino-r68s,lyt_t68m,pine64_rockpro64,radxa_rock-pi-4a,radxa_rock-pi-e,xunlong_orangepi-r1-plus,xunlong_orangepi-r1-plus-lts
         required: true
-        default: 'friendlyarm_nanopi-r4s'
+        default: 'friendlyarm_nanopi-r2s'
+      # 输入参数：设置根文件系统分区大小
       rootfs_partsize:
         description: '设置软件包大小 单位(MB)'
         required: true
-        default: '1024'
+        default: '4096'
 
 jobs:
   build:
+    # 指定运行环境为 Ubuntu 22.04
     runs-on: ubuntu-22.04
 
     steps:
+      # 步骤1：检出代码
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 步骤2：设置构建脚本的执行权限
       - name: Set executable permissions
         run: chmod +x ${{ github.workspace }}/rockchip/23.05.4/build.sh
 
+      # 步骤3：构建 Rockchip ImmortalWrt 固件
       - name: Building Rockchip ImmortalWrt
         run: |
+          # 获取用户输入的设备型号和分区大小
           profiles="${{ github.event.inputs.profile }}"
           rootfs_partsize="${{ github.event.inputs.rootfs_partsize }}"
           
+          # 将输入的设备型号字符串分割成数组
           IFS=',' read -r -a profile_array <<< "$profiles"
           
+          # 循环构建每个设备的固件
           for profile in "${profile_array[@]}"; do
             echo "Building for profile: $profile"
             
+            # 使用 Docker 运行构建环境
             docker run --rm -i \
               --user root \
+              # 挂载必要的目录和文件
               -v "${{ github.workspace }}/bin:/home/build/immortalwrt/bin" \
               -v "${{ github.workspace }}/files:/home/build/immortalwrt/files" \
               -v "${{ github.workspace }}/rockchip/imm.config:/home/build/immortalwrt/.config" \
               -v "${{ github.workspace }}/rockchip/23.05.4/build.sh:/home/build/immortalwrt/build.sh" \
+              # 设置环境变量
               -e PROFILE=$profile \
               -e ROOTFS_PARTSIZE=$rootfs_partsize \
+              # 使用官方提供的构建镜像
               immortalwrt/imagebuilder:rockchip-armv8-openwrt-23.05.4 /bin/bash /home/build/immortalwrt/build.sh
           done
 
+      # 附加步骤：获取当前时间戳（用于给release的文件作命名后缀）
+      - name: Get current date
+        id: date
+        run: echo "date=$(date +'%Y%m%d-%H%M')" >> $GITHUB_OUTPUT
+
+      # 步骤4：创建 GitHub Release 信息
       - name: Create GitHub Release Info
         uses: softprops/action-gh-release@v2.1.0
         with:
           tag_name: Autobuild-23.05.4
-          name: ImmortWrt-Rockchip
+          name: ImmortWrt-Rockchip-${{ steps.date.outputs.date }}
           body_path: ${{ github.workspace }}/info.md
           draft: false
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # 步骤5：上传构建好的固件到 Release
       - name: Upload ImmortWrt as release assets
         uses: softprops/action-gh-release@v2.1.0
         with:
           tag_name: Autobuild-23.05.4
+          # 上传所有构建好的 .img.gz 文件
           files: ${{ github.workspace }}/bin/targets/rockchip/armv8/*.img.gz
           token: ${{ secrets.GITHUB_TOKEN }}
         env:
