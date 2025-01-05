@@ -107,7 +107,7 @@ jobs:
       - name: Upload ImmortWrt as release assets
         uses: softprops/action-gh-release@v2.1.0
         with:
-          tag_name: Autobuild
+          tag_name: Autobuild-24.10
           files: ${{ github.workspace }}/bin/targets/rockchip/armv8/*.img.gz
           token: ${{ secrets.GITHUB_TOKEN }}
         env:
