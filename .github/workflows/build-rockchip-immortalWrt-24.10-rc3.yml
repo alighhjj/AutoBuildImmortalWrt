@@ -50,11 +50,11 @@ on:
           ,xunlong_orangepi-r1-plus
           ,xunlong_orangepi-r1-plus-lts  
         required: true
-        default: 'friendlyarm_nanopi-r2s'
+        default: 'friendlyarm_nanopi-r3s'
       rootfs_partsize:
         description: '设置软件包大小 单位(MB)'
         required: true
-        default: '4096'
+        default: '1024'
 
 jobs:
   build:
@@ -85,19 +85,14 @@ jobs:
               -v "${{ github.workspace }}/rockchip/build.sh:/home/build/immortalwrt/build.sh" \
               -e PROFILE=$profile \
               -e ROOTFS_PARTSIZE=$rootfs_partsize \
-              immortalwrt/imagebuilder:rockchip-armv8-openwrt-24.10 /bin/bash /home/build/immortalwrt/build.sh
+              immortalwrt/imagebuilder:rockchip-armv8-openwrt-24.10.0-rc3 /bin/bash /home/build/immortalwrt/build.sh
           done
-
-      # 附加步骤：获取当前时间戳（用于给release的文件作命名后缀）
-      - name: Get current date
-        id: date
-        run: echo "date=$(date +'%Y%m%d-%H%M')" >> $GITHUB_OUTPUT
 
       - name: Create GitHub Release Info
         uses: softprops/action-gh-release@v2.1.0
         with:
-          tag_name: Autobuild-24.10
-          name: ImmortWrt-Rockchip-${{ steps.date.outputs.date }}
+          tag_name: Autobuild
+          name: ImmortWrt-Rockchip
           body_path: ${{ github.workspace }}/info.md
           draft: false
           prerelease: false
